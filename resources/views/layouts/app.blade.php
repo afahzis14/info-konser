@@ -45,14 +45,14 @@
         </div>
 
         <div class="relative z-10">
-            @include('partials.navbar')
+        @include('partials.navbar')
 
-            <main class="pt-16">
-                @yield('content')
-            </main>
-        </div>
+        <main class="pt-16">
+            @yield('content')
+        </main>
 
         @include('partials.footer')
+        </div>
 
         @stack('scripts')
     </body>

@@ -84,10 +84,10 @@
                             </td>
                             <td class="py-4 px-6">
                                 @if($event->min_price)
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Mulai dari</p>
                                     <p class="text-lg font-bold text-purple-600 dark:text-purple-400">
                                         Rp {{ number_format($event->min_price, 0, ',', '.') }}
                                     </p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Mulai dari</p>
                                 @else
                                     <p class="text-gray-500 dark:text-gray-400">-</p>
                                 @endif

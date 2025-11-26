@@ -12,6 +12,13 @@
         <!-- Remix Icon -->
         <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
 
+        <!-- Quill Editor -->
+        <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+        <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+        <!-- Chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+
         <!-- Styles / Scripts -->
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
             @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -42,6 +49,11 @@
                         <a href="{{ route('admin.events.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('admin.events.*') ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }}">
                             <i class="ri-music-line"></i>
                             <span>Event Konser</span>
+                        </a>
+                        
+                        <a href="{{ route('admin.news.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors {{ request()->routeIs('admin.news.*') ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' }}">
+                            <i class="ri-newspaper-line"></i>
+                            <span>Kelola News</span>
                         </a>
                         
                         <a href="{{ url('/') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
@@ -80,24 +92,86 @@
 
                 <!-- Page Content -->
                 <div class="p-6 max-w-full">
-                    @if(session('success'))
-                        <div class="mb-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 px-4 py-3 rounded-lg flex items-center gap-2">
-                            <i class="ri-checkbox-circle-line"></i>
-                            <span>{{ session('success') }}</span>
-                        </div>
-                    @endif
-
-                    @if(session('error'))
-                        <div class="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 px-4 py-3 rounded-lg flex items-center gap-2">
-                            <i class="ri-error-warning-line"></i>
-                            <span>{{ session('error') }}</span>
-                        </div>
-                    @endif
-
                     @yield('content')
                 </div>
             </main>
         </div>
+
+        <!-- Toast Container -->
+        <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
+
+        <script>
+            // Toast Notification System
+            function showToast(message, type = 'success') {
+                const container = document.getElementById('toast-container');
+                if (!container) return;
+
+                const toast = document.createElement('div');
+                const isDark = document.documentElement.classList.contains('dark');
+                
+                const typeConfig = {
+                    success: {
+                        bg: 'bg-green-50 dark:bg-green-900/20',
+                        border: 'border-green-200 dark:border-green-800',
+                        text: 'text-green-800 dark:text-green-200',
+                        icon: 'ri-checkbox-circle-line'
+                    },
+                    error: {
+                        bg: 'bg-red-50 dark:bg-red-900/20',
+                        border: 'border-red-200 dark:border-red-800',
+                        text: 'text-red-800 dark:text-red-200',
+                        icon: 'ri-error-warning-line'
+                    },
+                    info: {
+                        bg: 'bg-blue-50 dark:bg-blue-900/20',
+                        border: 'border-blue-200 dark:border-blue-800',
+                        text: 'text-blue-800 dark:text-blue-200',
+                        icon: 'ri-information-line'
+                    }
+                };
+
+                const config = typeConfig[type] || typeConfig.success;
+
+                toast.className = `${config.bg} ${config.border} ${config.text} px-4 py-3 rounded-lg flex items-center gap-2 shadow-lg min-w-[300px] max-w-md transform translate-x-full transition-all duration-300 ease-in-out`;
+                toast.innerHTML = `
+                    <i class="${config.icon} text-xl"></i>
+                    <span class="flex-1">${message}</span>
+                    <button onclick="this.parentElement.remove()" class="ml-2 hover:opacity-70 transition-opacity">
+                        <i class="ri-close-line"></i>
+                    </button>
+                `;
+
+                container.appendChild(toast);
+
+                // Trigger animation
+                setTimeout(() => {
+                    toast.classList.remove('translate-x-full');
+                }, 10);
+
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    toast.classList.add('translate-x-full');
+                    setTimeout(() => {
+                        if (toast.parentElement) {
+                            toast.remove();
+                        }
+                    }, 300);
+                }, 5000);
+            }
+
+            // Show session messages as toasts
+            @if(session('success'))
+                document.addEventListener('DOMContentLoaded', function() {
+                    showToast('{{ session('success') }}', 'success');
+                });
+            @endif
+
+            @if(session('error'))
+                document.addEventListener('DOMContentLoaded', function() {
+                    showToast('{{ session('error') }}', 'error');
+                });
+            @endif
+        </script>
 
         @stack('scripts')
     </body>

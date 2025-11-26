@@ -40,9 +40,6 @@
                             </button>
                         </form>
                     @else
-                        <a href="{{ route('admin.login') }}" class="text-white hover:text-orange-400 transition-colors">
-                            Masuk Admin
-                        </a>
                     @endauth
                 @endif
             </div>
