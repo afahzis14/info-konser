@@ -8,7 +8,13 @@ use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\AuthController;
 
 Route::get('/', function () {
-    return view('welcome');
+    $events = \App\Models\Event::where('status', '!=', 'ended')
+        ->where('event_date', '>=', now())
+        ->orderBy('event_date', 'asc')
+        ->take(3)
+        ->get();
+    
+    return view('welcome', compact('events'));
 });
 
 Route::get('/pembelian-tiket', function () {
@@ -28,8 +34,7 @@ Route::get('/news', function () {
             }
         })
         ->orderBy('published_date', 'desc')
-        ->take(6)
-        ->get();
+        ->paginate(6);
     
     return view('news', compact('featuredNews', 'latestNews'));
 })->name('news');

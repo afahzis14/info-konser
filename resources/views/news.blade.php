@@ -106,17 +106,64 @@
         </div>
 
         <!-- Pagination -->
-        <div class="flex justify-center items-center gap-2 mt-8">
-            <button class="px-4 py-2 bg-black/60 backdrop-blur-md border border-orange-500/30 text-white rounded-lg hover:bg-orange-500/20 hover:border-orange-500/50 transition-colors">
-                <i class="ri-arrow-left-line"></i>
-            </button>
-            <button class="px-4 py-2 bg-orange-600 text-white rounded-lg font-semibold">1</button>
-            <button class="px-4 py-2 bg-black/60 backdrop-blur-md border border-orange-500/30 text-white rounded-lg hover:bg-orange-500/20 hover:border-orange-500/50 transition-colors">2</button>
-            <button class="px-4 py-2 bg-black/60 backdrop-blur-md border border-orange-500/30 text-white rounded-lg hover:bg-orange-500/20 hover:border-orange-500/50 transition-colors">3</button>
-            <button class="px-4 py-2 bg-black/60 backdrop-blur-md border border-orange-500/30 text-white rounded-lg hover:bg-orange-500/20 hover:border-orange-500/50 transition-colors">
-                <i class="ri-arrow-right-line"></i>
-            </button>
-        </div>
+        @if($latestNews->hasPages())
+            <div class="flex justify-center items-center gap-2 mt-8 flex-wrap">
+                {{-- Previous Page Link --}}
+                @if ($latestNews->onFirstPage())
+                    <span class="px-4 py-2 bg-black/40 backdrop-blur-md border border-orange-500/20 text-gray-500 rounded-lg cursor-not-allowed">
+                        <i class="ri-arrow-left-line"></i>
+                    </span>
+                @else
+                    <a href="{{ $latestNews->previousPageUrl() }}" class="px-4 py-2 bg-black/60 backdrop-blur-md border border-orange-500/30 text-white rounded-lg hover:bg-orange-500/20 hover:border-orange-500/50 transition-colors">
+                        <i class="ri-arrow-left-line"></i>
+                    </a>
+                @endif
+
+                {{-- Pagination Elements --}}
+                @php
+                    $currentPage = $latestNews->currentPage();
+                    $lastPage = $latestNews->lastPage();
+                    $startPage = max(1, $currentPage - 2);
+                    $endPage = min($lastPage, $currentPage + 2);
+                @endphp
+
+                {{-- First Page --}}
+                @if ($startPage > 1)
+                    <a href="{{ $latestNews->url(1) }}" class="px-4 py-2 bg-black/60 backdrop-blur-md border border-orange-500/30 text-white rounded-lg hover:bg-orange-500/20 hover:border-orange-500/50 transition-colors">1</a>
+                    @if ($startPage > 2)
+                        <span class="px-2 text-gray-400">...</span>
+                    @endif
+                @endif
+
+                {{-- Page Numbers --}}
+                @for ($page = $startPage; $page <= $endPage; $page++)
+                    @if ($page == $currentPage)
+                        <span class="px-4 py-2 bg-orange-600 text-white rounded-lg font-semibold">{{ $page }}</span>
+                    @else
+                        <a href="{{ $latestNews->url($page) }}" class="px-4 py-2 bg-black/60 backdrop-blur-md border border-orange-500/30 text-white rounded-lg hover:bg-orange-500/20 hover:border-orange-500/50 transition-colors">{{ $page }}</a>
+                    @endif
+                @endfor
+
+                {{-- Last Page --}}
+                @if ($endPage < $lastPage)
+                    @if ($endPage < $lastPage - 1)
+                        <span class="px-2 text-gray-400">...</span>
+                    @endif
+                    <a href="{{ $latestNews->url($lastPage) }}" class="px-4 py-2 bg-black/60 backdrop-blur-md border border-orange-500/30 text-white rounded-lg hover:bg-orange-500/20 hover:border-orange-500/50 transition-colors">{{ $lastPage }}</a>
+                @endif
+
+                {{-- Next Page Link --}}
+                @if ($latestNews->hasMorePages())
+                    <a href="{{ $latestNews->nextPageUrl() }}" class="px-4 py-2 bg-black/60 backdrop-blur-md border border-orange-500/30 text-white rounded-lg hover:bg-orange-500/20 hover:border-orange-500/50 transition-colors">
+                        <i class="ri-arrow-right-line"></i>
+                    </a>
+                @else
+                    <span class="px-4 py-2 bg-black/40 backdrop-blur-md border border-orange-500/20 text-gray-500 rounded-lg cursor-not-allowed">
+                        <i class="ri-arrow-right-line"></i>
+                    </span>
+                @endif
+            </div>
+        @endif
     </div>
 </div>
 @endsection

@@ -223,10 +223,6 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Show welcome toast
-    if (typeof showToast === 'function') {
-        showToast('Selamat datang, Super Admin!', 'success');
-    }
     
     console.log('DOM loaded, initializing charts...');
     

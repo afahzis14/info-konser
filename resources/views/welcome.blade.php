@@ -2,6 +2,11 @@
 
 @section('title', 'Info Konser - Platform Informasi Konser & Musik Terlengkap')
 
+@php
+    use Illuminate\Support\Facades\Storage;
+    use Illuminate\Support\Str;
+@endphp
+
 @section('content')
     <!-- Hero Section -->
     <section class="relative overflow-hidden">
@@ -44,77 +49,63 @@
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Concert Card 1 -->
-                <div class="group bg-black/60 backdrop-blur-md border border-orange-500/30 rounded-xl shadow-lg hover:shadow-2xl hover:border-orange-500/50 transition-all duration-300 overflow-hidden">
-                    <div class="h-48 bg-gradient-to-br from-purple-500 to-pink-500 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
-                        <div class="absolute top-4 right-4">
-                            <span class="px-3 py-1 bg-white/90 dark:bg-gray-900/90 text-purple-600 dark:text-purple-400 rounded-full text-sm font-semibold">
-                                Coming Soon
-                            </span>
+                @forelse($events ?? [] as $event)
+                    @php
+                        // Gradient colors based on status
+                        $gradients = [
+                            'coming_soon' => 'from-purple-500 to-pink-500',
+                            'hot' => 'from-indigo-500 to-purple-500',
+                            'new' => 'from-pink-500 to-red-500',
+                        ];
+                        $gradient = $gradients[$event->status] ?? 'from-purple-500 to-pink-500';
+                        
+                        // Status label
+                        $statusLabels = [
+                            'coming_soon' => 'Coming Soon',
+                            'hot' => 'Hot',
+                            'new' => 'New',
+                        ];
+                        $statusLabel = $statusLabels[$event->status] ?? 'Coming Soon';
+                        
+                        // Status text color
+                        $statusColors = [
+                            'coming_soon' => 'text-purple-600 dark:text-purple-400',
+                            'hot' => 'text-indigo-600 dark:text-indigo-400',
+                            'new' => 'text-pink-600 dark:text-pink-400',
+                        ];
+                        $statusColor = $statusColors[$event->status] ?? 'text-purple-600 dark:text-purple-400';
+                    @endphp
+                    <div class="group bg-black/60 backdrop-blur-md border border-orange-500/30 rounded-xl shadow-lg hover:shadow-2xl hover:border-orange-500/50 transition-all duration-300 overflow-hidden">
+                        <div class="h-48 bg-gradient-to-br {{ $gradient }} relative overflow-hidden">
+                            @if($event->image)
+                                <img src="{{ Storage::url($event->image) }}" alt="{{ $event->title }}" class="w-full h-full object-cover">
+                            @endif
+                            <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
+                            <div class="absolute top-4 right-4">
+                                <span class="px-3 py-1 bg-white/90 dark:bg-gray-900/90 {{ $statusColor }} rounded-full text-sm font-semibold">
+                                    {{ $statusLabel }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h4 class="text-xl font-bold mb-2 text-white">
+                                {{ $event->title }}
+                            </h4>
+                            <p class="text-gray-300 mb-4">
+                                {{ Str::limit($event->description ?? '', 80) }}
+                            </p>
+                            <div class="flex items-center justify-between text-sm text-gray-400">
+                                <span><i class="ri-map-pin-line"></i> {{ $event->location }}</span>
+                                <span><i class="ri-calendar-line"></i> {{ $event->formatted_date }}</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="p-6">
-                        <h4 class="text-xl font-bold mb-2 text-white">
-                            Festival Musik Nusantara
-                        </h4>
-                        <p class="text-gray-300 mb-4">
-                            Konser akbar menampilkan artis-artis terbaik Indonesia
-                        </p>
-                        <div class="flex items-center justify-between text-sm text-gray-400">
-                            <span><i class="ri-map-pin-line"></i> Jakarta</span>
-                            <span><i class="ri-calendar-line"></i> 15 Des 2024</span>
-                        </div>
+                @empty
+                    <div class="col-span-full text-center py-12">
+                        <i class="ri-calendar-event-line text-4xl text-gray-400 mb-4"></i>
+                        <p class="text-gray-400">Belum ada event yang tersedia</p>
                     </div>
-                </div>
-
-                <!-- Concert Card 2 -->
-                <div class="group bg-black/60 backdrop-blur-md border border-orange-500/30 rounded-xl shadow-lg hover:shadow-2xl hover:border-orange-500/50 transition-all duration-300 overflow-hidden">
-                    <div class="h-48 bg-gradient-to-br from-indigo-500 to-purple-500 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
-                        <div class="absolute top-4 right-4">
-                            <span class="px-3 py-1 bg-white/90 dark:bg-gray-900/90 text-indigo-600 dark:text-indigo-400 rounded-full text-sm font-semibold">
-                                Hot
-                            </span>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h4 class="text-xl font-bold mb-2 text-white">
-                            Rock Concert Night
-                        </h4>
-                        <p class="text-gray-300 mb-4">
-                            Malam penuh energi dengan band rock terbaik
-                        </p>
-                        <div class="flex items-center justify-between text-sm text-gray-400">
-                            <span><i class="ri-map-pin-line"></i> Bandung</span>
-                            <span><i class="ri-calendar-line"></i> 20 Des 2024</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Concert Card 3 -->
-                <div class="group bg-black/60 backdrop-blur-md border border-orange-500/30 rounded-xl shadow-lg hover:shadow-2xl hover:border-orange-500/50 transition-all duration-300 overflow-hidden">
-                    <div class="h-48 bg-gradient-to-br from-pink-500 to-red-500 relative overflow-hidden">
-                        <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
-                        <div class="absolute top-4 right-4">
-                            <span class="px-3 py-1 bg-white/90 dark:bg-gray-900/90 text-pink-600 dark:text-pink-400 rounded-full text-sm font-semibold">
-                                New
-                            </span>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <h4 class="text-xl font-bold mb-2 text-white">
-                            Jazz & Blues Festival
-                        </h4>
-                        <p class="text-gray-300 mb-4">
-                            Nikmati malam indah dengan alunan jazz dan blues
-                        </p>
-                        <div class="flex items-center justify-between text-sm text-gray-400">
-                            <span><i class="ri-map-pin-line"></i> Yogyakarta</span>
-                            <span><i class="ri-calendar-line"></i> 25 Des 2024</span>
-                        </div>
-                    </div>
-                </div>
+                @endforelse
             </div>
         </div>
     </section>

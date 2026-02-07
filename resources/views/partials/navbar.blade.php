@@ -3,9 +3,8 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
             <div class="flex items-center">
-                <a href="{{ url('/') }}" class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent hover:opacity-80 transition-opacity flex items-center gap-2">
-                    <i class="ri-music-line"></i>
-                    <span>Info Konser</span>
+                <a href="{{ url('/') }}" class="hover:opacity-80 transition-opacity flex items-center pt-2">
+                    <img src="{{ asset('favicon.png') }}" alt="Info Konser" class="h-24">
                 </a>
             </div>
             
